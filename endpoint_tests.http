@@ -1,0 +1,259 @@
+### Fitness Tracker API Endpoints
+
+### Home endpoint
+GET http://localhost:5000/
+
+## Authentication Endpoints
+
+### Signup as Trainer
+POST http://localhost:5000/api/auth/signup
+Content-Type: application/json
+
+{
+  "username": "trainer1",
+  "password": "password123",
+  "role": "Trainer"
+}
+
+### Signup as Trainee
+POST http://localhost:5000/api/auth/signup
+Content-Type: application/json
+
+{
+  "username": "trainee1",
+  "password": "password123",
+  "role": "Trainee"
+}
+
+### Signup with invalid role (should fail)
+POST http://localhost:5000/api/auth/signup
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "password123",
+  "role": "InvalidRole"
+}
+
+### Signin as Trainer
+POST http://localhost:5000/api/auth/signin
+Content-Type: application/json
+
+{
+  "username": "trainer1",
+  "password": "password123"
+}
+
+### Signin as Trainee
+POST http://localhost:5000/api/auth/signin
+Content-Type: application/json
+
+{
+  "username": "trainee1",
+  "password": "password123"
+}
+
+### Signin with invalid credentials (should fail)
+POST http://localhost:5000/api/auth/signin
+Content-Type: application/json
+
+{
+  "username": "trainer1",
+  "password": "wrong_password"
+}
+
+## Group Endpoints
+
+### Create a group (as Trainer)
+POST http://localhost:5000/api/groups
+Content-Type: application/json
+Cookie: jwt=<trainer_token>
+
+{
+  "name": "Fitness Group",
+  "description": "A group for fitness enthusiasts"
+}
+
+### Join a group (as Trainee)
+POST http://localhost:5000/api/groups/join
+Content-Type: application/json
+Cookie: jwt=<trainee_token>
+
+{
+  "invite_code": "abc123"
+}
+
+### Generate invite code for a group (as Trainer)
+POST http://localhost:5000/api/groups/1/invite
+Content-Type: application/json
+Cookie: jwt=<trainer_token>
+
+### Get group members (as Trainer)
+GET http://localhost:5000/api/groups/1/members
+Cookie: jwt=<trainer_token>
+
+## Workout Endpoints
+
+### Create a workout (as Trainer)
+POST http://localhost:5000/api/workouts
+Content-Type: application/json
+Cookie: jwt=<trainer_token>
+
+{
+  "name": "Morning Cardio",
+  "exercise": "Running",
+  "duration": 30,
+  "type": "Cardio",
+  "description": "Morning cardio workout"
+}
+
+### Get all workouts (as Trainer)
+GET http://localhost:5000/api/workouts
+Cookie: jwt=<trainer_token>
+
+### Get all workouts (as Trainee)
+GET http://localhost:5000/api/workouts
+Cookie: jwt=<trainee_token>
+
+### Get a specific workout
+GET http://localhost:5000/api/workouts/1
+Cookie: jwt=<trainer_token>
+
+## Workout Plan Endpoints
+
+### Create a workout plan (as Trainer)
+POST http://localhost:5000/api/workout-plans
+Content-Type: application/json
+Cookie: jwt=<trainer_token>
+
+{
+  "name": "Weight Loss Plan",
+  "description": "A 4-week plan for weight loss"
+}
+
+### Get all workout plans (as Trainer)
+GET http://localhost:5000/api/workout-plans
+Cookie: jwt=<trainer_token>
+
+### Get a specific workout plan
+GET http://localhost:5000/api/workout-plans/1
+Cookie: jwt=<trainer_token>
+
+### Add a workout to a plan (as Trainer)
+POST http://localhost:5000/api/workout-plans/1/workouts
+Content-Type: application/json
+Cookie: jwt=<trainer_token>
+
+{
+  "workout_id": 1,
+  "order": 1
+}
+
+### Assign a plan to a group (as Trainer)
+POST http://localhost:5000/api/workout-plans/1/assign
+Content-Type: application/json
+Cookie: jwt=<trainer_token>
+
+{
+  "group_id": 1
+}
+
+## Progress Endpoints
+
+### Log progress (as Trainee)
+POST http://localhost:5000/api/progress
+Content-Type: application/json
+Cookie: jwt=<trainee_token>
+
+{
+  "workout_id": 1,
+  "value": 10.5,
+  "date": "2023-04-26",
+  "description": "Completed 10.5 km run"
+}
+
+### Get all progress (as Trainer)
+GET http://localhost:5000/api/progress
+Cookie: jwt=<trainer_token>
+
+### Get a specific progress entry
+GET http://localhost:5000/api/progress/1
+Cookie: jwt=<trainer_token>
+
+### Get user's progress
+GET http://localhost:5000/api/progress/user
+Cookie: jwt=<trainee_token>
+
+### CURL Commands for Testing
+
+## Authentication
+
+# Signup as Trainer
+# curl -X POST http://localhost:5000/api/auth/signup -H "Content-Type: application/json" -d '{"username":"trainer1","password":"password123","role":"Trainer"}'
+
+# Signup as Trainee
+# curl -X POST http://localhost:5000/api/auth/signup -H "Content-Type: application/json" -d '{"username":"trainee1","password":"password123","role":"Trainee"}'
+
+# Signin as Trainer
+# curl -X POST http://localhost:5000/api/auth/signin -H "Content-Type: application/json" -d '{"username":"trainer1","password":"password123"}' -c cookies.txt
+
+# Signin as Trainee
+# curl -X POST http://localhost:5000/api/auth/signin -H "Content-Type: application/json" -d '{"username":"trainee1","password":"password123"}' -c cookies.txt
+
+## Groups
+
+# Create a group (as Trainer)
+# curl -X POST http://localhost:5000/api/groups -H "Content-Type: application/json" -b cookies.txt -d '{"name":"Fitness Group","description":"A group for fitness enthusiasts"}'
+
+# Join a group (as Trainee)
+# curl -X POST http://localhost:5000/api/groups/join -H "Content-Type: application/json" -b cookies.txt -d '{"invite_code":"abc123"}'
+
+# Generate invite code for a group (as Trainer)
+# curl -X POST http://localhost:5000/api/groups/1/invite -H "Content-Type: application/json" -b cookies.txt
+
+# Get group members (as Trainer)
+# curl -X GET http://localhost:5000/api/groups/1/members -b cookies.txt
+
+## Workouts
+
+# Create a workout (as Trainer)
+# curl -X POST http://localhost:5000/api/workouts -H "Content-Type: application/json" -b cookies.txt -d '{"name":"Morning Cardio","exercise":"Running","duration":30,"type":"Cardio","description":"Morning cardio workout"}'
+
+# Get all workouts (as Trainer)
+# curl -X GET http://localhost:5000/api/workouts -b cookies.txt
+
+# Get a specific workout
+# curl -X GET http://localhost:5000/api/workouts/1 -b cookies.txt
+
+## Workout Plans
+
+# Create a workout plan (as Trainer)
+# curl -X POST http://localhost:5000/api/workout-plans -H "Content-Type: application/json" -b cookies.txt -d '{"name":"Weight Loss Plan","description":"A 4-week plan for weight loss"}'
+
+# Get all workout plans (as Trainer)
+# curl -X GET http://localhost:5000/api/workout-plans -b cookies.txt
+
+# Get a specific workout plan
+# curl -X GET http://localhost:5000/api/workout-plans/1 -b cookies.txt
+
+# Add a workout to a plan (as Trainer)
+# curl -X POST http://localhost:5000/api/workout-plans/1/workouts -H "Content-Type: application/json" -b cookies.txt -d '{"workout_id":1,"order":1}'
+
+# Assign a plan to a group (as Trainer)
+# curl -X POST http://localhost:5000/api/workout-plans/1/assign -H "Content-Type: application/json" -b cookies.txt -d '{"group_id":1}'
+
+## Progress
+
+# Log progress (as Trainee)
+# curl -X POST http://localhost:5000/api/progress -H "Content-Type: application/json" -b cookies.txt -d '{"workout_id":1,"value":10.5,"date":"2023-04-26","description":"Completed 10.5 km run"}'
+
+# Get all progress (as Trainer)
+# curl -X GET http://localhost:5000/api/progress -b cookies.txt
+
+# Get a specific progress entry
+# curl -X GET http://localhost:5000/api/progress/1 -b cookies.txt
+
+# Get user's progress
+# curl -X GET http://localhost:5000/api/progress/user -b cookies.txt
+
+###
